@@ -1,4 +1,4 @@
-FROM node:13 AS build-env
+FROM node:13.4-alpine AS build-env
 WORKDIR /app
 
 COPY package.json package-lock.json ./
