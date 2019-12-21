@@ -1,0 +1,40 @@
+{
+  "name": "vue-app",
+  "version": "1.0.0",
+  "main": "src/index.js",
+  "description": "Exemplo de aplicativo Vue",
+  "private": true,
+  "author": "Edson Dewes",
+  "license": "MIT",
+  "scripts": {
+    "start": "webpack-dev-server --hot --config webpack.dev.js",
+    "build": "webpack --config webpack.prod.js"
+  },
+  "devDependencies": {
+    "@babel/core": "7.7.7",
+    "@babel/preset-env": "7.7.7",
+    "babel-eslint": "10.0.3",
+    "babel-loader": "8.0.6",
+    "copy-webpack-plugin": "5.1.1",
+    "css-loader": "3.4.0",
+    "eslint": "6.7.2",
+    "eslint-loader": "3.0.3",
+    "eslint-plugin-vue": "6.0.1",
+    "mini-css-extract-plugin": "0.8.2",
+    "vue-loader": "15.8.3",
+    "vue-style-loader": "4.1.2",
+    "vue-template-compiler": "2.6.11",
+    "webpack": "4.41.4",
+    "webpack-cli": "3.3.10",
+    "webpack-dev-server": "3.10.1",
+    "webpack-merge": "4.2.2"
+  },
+  "dependencies": {
+    "@primer/octicons": "9.3.1",
+    "apollo-boost": "0.4.7",
+    "graphql": "14.5.8",
+    "vue": "2.6.11",
+    "vue-apollo": "3.0.2",
+    "vue-router": "3.1.3"
+  }
+}

@@ -1,0 +1,63 @@
+version: "3.7"
+
+services:
+  mongo:
+    image: mongo
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo-data:/data/db
+
+  auth:
+    build:
+      context: ./src/auth/
+    image: edsondewes/demo-vue:auth
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.middlewares.auth-stripprefix.stripprefix.prefixes=/auth"
+      - "traefik.http.routers.auth.rule=PathPrefix(`/auth`)"
+      - "traefik.http.routers.auth.middlewares=auth-stripprefix"
+      - "traefik.http.services.auth.loadbalancer.server.port=80"
+
+  graphql-api:
+    depends_on:
+      - mongo
+      - auth
+    build:
+      context: ./src/graphql-api/
+    image: edsondewes/demo-vue:graphql
+    environment:
+      auth: "http://auth"
+      mongoUrl: "mongodb://mongo:27017/demo"
+      graphql__playground: "true"
+      graphql__introspection: "true"
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.middlewares.graphql-api-stripprefix.stripprefix.prefixes=/graphql"
+      - "traefik.http.routers.graphql-api.rule=PathPrefix(`/graphql`)"
+      - "traefik.http.routers.graphql-api-stripprefix.middlewares=graphql-api-stripprefix"
+      - "traefik.http.services.graphql-api.loadbalancer.server.port=80"
+
+  app:
+    build:
+      context: ./src/vue-app/
+      args:
+        authUrl: "http://localhost:8080/auth"
+        graphqlUrl: "http://localhost:8080/graphql"
+    image: edsondewes/demo-vue:app
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.app.rule=PathPrefix(`/`)"
+      - "traefik.http.services.app.loadbalancer.server.port=80"
+
+  proxy:
+    image: traefik:2.1
+    ports:
+      - "8080:80"
+      - "8081:8080"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./traefik.toml:/etc/traefik/traefik.toml
+
+volumes:
+  mongo-data:
